@@ -19,13 +19,17 @@ mass = (2 * pairs.a.pt * pairs.b.pt) ** 0.5                  # records nodes, re
 s.form(mass).is_typetracer        # True
 ```
 
-## What it does (M3)
+## What it does
 
 - `AwkwardBackend`: typetracer `op_form` + real `eval_stage` (one `apply` dispatch for both).
-- `gak`: combinations/cartesian/zip/num/sum/any/all/argmin/argsort/firsts/where/... recording nodes.
+- `gak`: the awkward-mirroring namespace (combinations/cartesian/zip/num/sum/any/all/argmin/argsort/
+  firsts/where/...). awkward's idiom is *functions over arrays*, so `gak` (plus ufuncs/operators) is
+  the entire user surface — this backend deliberately supplies no array-method proxy (M11).
 - `from_awkward` / `from_parquet` metadata-only sources.
+- **Column projection** (`project`): a reporting typetracer replays the recorded stages symbolically
+  and reports only the buffers each source actually touches — no over-touching (M5).
 - `payloads`: correctionlib / ONNX / dataset descriptors that content-hash the file.
 - Validated against the corpus: **ADL queries 1-8 + the AGC object-selection slice** record
-  metadata-only with correct forms; `materialize` matches plain awkward.
+  metadata-only with correct forms; `materialize` matches plain awkward bit-for-bit.
 
 Reuse awkward / correctionlib / ONNX — invent nothing. Status: see `.graphed/state.json` + `CLAUDE.md`.
